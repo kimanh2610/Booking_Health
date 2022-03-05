@@ -2,25 +2,41 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     //add colum
-    await queryInterface.createTable('allcode', {
+    await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      key: {
+      email: {
         type: Sequelize.STRING
       },
-      type: {
+      password: {
         type: Sequelize.STRING
       },
-      valueEn: {
+      fullName: {
         type: Sequelize.STRING
       },
-      valueVi: {
+      address: {
         type: Sequelize.STRING
       },
+      phoneNumber: {
+        type: Sequelize.STRING
+      },
+      gender: {
+        type: Sequelize.BOOLEAN
+      },
+      roleId: {
+        type: Sequelize.STRING
+      },
+      positionId: {
+        type: Sequelize.STRING
+      },
+      image: {
+        type: Sequelize.STRING
+      },
+      
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -32,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('allcode');
+    await queryInterface.dropTable('Users');
   }
 };
