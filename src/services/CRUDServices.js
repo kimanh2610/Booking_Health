@@ -4,7 +4,7 @@ import db from '../models/index';
 const salt = bcrypt.genSaltSync(10);
 
 
-let createNewUser = async (data) => {
+module.exports.createNewUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -16,7 +16,7 @@ let createNewUser = async (data) => {
                 phoneNumber: data.phoneNumber,
                 gender: data.gender === '1' ? true : false,
                 roleId: data.roleId,
-                
+
             })
             resolve('ok create a new user successed!');
         } catch (e) {
@@ -37,6 +37,61 @@ let hashUserPassword = (password) => {
         }
     })
 }
-module.exports = {
-    createNewUser: createNewUser,
+
+module.exports.getAllUsers = (req, res) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let users = db.User.findAll({
+                raw: true,
+            });
+            resolve(users)
+        } catch (e) {
+            reject(e);
+        }
+    })
 }
+
+module.exports.getUserInfoById = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userId },
+                raw: true,
+            })
+            if (user) {
+                resolve(user)
+            }
+            else {
+                resolve({})
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+module.exports.updateUserData = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({ //lam on cai gi co lien quan den du lieu thi dung bat dong bo mot cai cho tui vui chu fix code met qua
+                where: { id: data.id }
+            })
+           
+            if (user) {
+                user.fullName = data.fullName
+                user.address = data.address
+                await user.save()
+                // console.log(updateUser)
+                resolve();
+
+            } else {
+                resolve();
+            }
+
+        } catch (e) {
+            console.log(e)
+            reject(e);
+        }
+    })
+}
+
