@@ -76,13 +76,15 @@ module.exports.updateUserData = (data) => {
             let user = await db.User.findOne({ //lam on cai gi co lien quan den du lieu thi dung bat dong bo mot cai cho tui vui chu fix code met qua
                 where: { id: data.id }
             })
-           
+
             if (user) {
                 user.fullName = data.fullName
                 user.address = data.address
                 await user.save()
                 // console.log(updateUser)
-                resolve();
+
+                let allUsers = await db.User.findAll();
+                resolve(allUsers);
 
             } else {
                 resolve();
@@ -94,4 +96,24 @@ module.exports.updateUserData = (data) => {
         }
     })
 }
+
+module.exports.deleteUserById = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: { id: userId}
+            })
+
+            if(user){
+                await user.destroy();
+            }
+
+            resolve();
+        } catch (e) {
+            reject(e);
+
+        }
+    })
+}
+
 
