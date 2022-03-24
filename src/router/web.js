@@ -20,7 +20,7 @@ let initWebRoutes = (app) => {
     router.get('/about', homeController.getAboutPage);
     router.get('/', homeController.getHomePage);
 
-    router.post('/api/login', userController);
+    router.post('/api/login', userController.handleLogin);
     
 
     // router.get('/', (req, res) => {

@@ -1,4 +1,4 @@
-import db from '../models/index';
+import db from "../models/index";
 import bcrypt from 'bcryptjs';
 
 module.exports.handleUserLogin = (email, password) => {
@@ -18,7 +18,7 @@ module.exports.handleUserLogin = (email, password) => {
                     let check = await bcrypt.compareSync(password, user.password); // false
                     if(check) {
                         userData.errCode = 0;
-                        userData.errMessage = 'ok';
+                        userData.errMessage = 'Ok';
                         delete user.password;
                         userData.user = user;
 
