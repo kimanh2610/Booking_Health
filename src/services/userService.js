@@ -16,21 +16,21 @@ module.exports.handleUserLogin = (email, password) => {
                 if (user) {
                     //compare password
                     let check = await bcrypt.compareSync(password, user.password); // false
-                    if(check) {
+                    if (check) {
                         userData.errCode = 0;
                         userData.errMessage = 'Ok';
                         delete user.password;
                         userData.user = user;
 
-                    }else{
+                    } else {
                         userData.errCode = 3;
                         userData.errMessage = 'Wrong password';
                     }
-                }else{
+                } else {
                     userData.errCode = 2;
                     userData.errMessage = `User's not found`;
                 }
-           
+
             }
             else {
                 //return error
@@ -55,6 +55,32 @@ let checkUserEmail = (userEmail) => {
             } else {
                 resolve(false)
             }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+module.exports.getAllUsers = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let users = '';
+            if (userId === 'ALL') {
+                users = await db.User.findAll({
+                    attributes: {
+                        exclude: ['password']
+                    }
+                })
+            } if (userId && userId !== 'ALL') {
+                users = await db.User.findOne({
+                    where: { id: userId },
+                    attributes: {
+                        exclude: ['password']
+                    }
+                })
+            }
+            resolve(users)
+
         } catch (e) {
             reject(e);
         }
