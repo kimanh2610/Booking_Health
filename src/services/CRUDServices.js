@@ -73,7 +73,7 @@ module.exports.getUserInfoById = (userId) => {
 module.exports.updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.User.findOne({ //lam on cai gi co lien quan den du lieu thi dung bat dong bo mot cai cho tui vui chu fix code met qua
+            let user = await db.User.findOne({
                 where: { id: data.id }
             })
 
