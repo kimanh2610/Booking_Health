@@ -109,24 +109,27 @@ module.exports.createNewUser = (data) => {
             if (check === true) {
                 resolve({
                     errCode: 1,
-                    message: 'Your email is already exists'
+                    errMessage: 'Your email is already exists'
                 })
-            }
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                password: hashPasswordFromBcrypt,
-                fullName: data.fullName,
-                address: data.address,
-                phoneNumber: data.phoneNumber,
-                gender: data.gender === '1' ? true : false,
-                roleId: data.roleId,
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    fullName: data.fullName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    roleId: data.roleId,
 
-            })
-            resolve({
-                errCode: 0,
-                message: 'OK'
-            });
+                })
+                resolve({
+                    errCode: 0,
+                    message: 'OK'
+                });
+            }
+
+
         } catch (e) {
             reject(e);
         }
@@ -136,17 +139,17 @@ module.exports.createNewUser = (data) => {
 module.exports.deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         let user = await db.User.findOne({
-            where: {id: userId}
+            where: { id: userId }
         })
-        if(!user){
+        if (!user) {
             resolve({
                 errCode: 2,
                 errMessage: "The user isn't exist"
             })
         }
-        
+
         await db.User.destroy({//ket noi DB -> xoa tren DB
-            where: {id: userId},
+            where: { id: userId },
         })
         resolve({
             errCode: 0,
@@ -155,11 +158,11 @@ module.exports.deleteUser = (userId) => {
     })
 }
 
-module.exports.updateUserData = (data) =>{
+module.exports.updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
-        try{
-            if(!data.id){
-                resolve({ 
+        try {
+            if (!data.id) {
+                resolve({
                     errCode: 2,
                     message: 'Missing required parameter'
                 })
@@ -171,7 +174,7 @@ module.exports.updateUserData = (data) =>{
 
             if (user) {
                 user.fullName = data.fullName,
-                user.address = data.address
+                    user.address = data.address
                 await user.save()
                 resolve({
                     errCode: 0,
@@ -183,7 +186,7 @@ module.exports.updateUserData = (data) =>{
                     message: `User's not found`
                 });
             }
-        }catch (e) {
+        } catch (e) {
             reject(e);
         }
     })
