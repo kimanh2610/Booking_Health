@@ -23,7 +23,7 @@ module.exports.handleUserLogin = (email, password) => {
             if (isExist) {
                 //user already exists
                 let user = await db.User.findOne({
-                    attributes: ['email', 'roleId', 'password'],
+                    attributes: ['email', 'roleId', 'password', 'fullName'],
                     where: { email: email },
                     raw: true
                 });
