@@ -162,7 +162,7 @@ module.exports.deleteUser = (userId) => {
 module.exports.updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 2,
                     message: 'Missing required parameter'
@@ -174,8 +174,15 @@ module.exports.updateUserData = (data) => {
             })
 
             if (user) {
-                user.fullName = data.fullName,
-                    user.address = data.address
+                //user.email = data.email;
+                user.fullName = data.fullName;
+                user.address = data.address;
+                user.phoneNumber = data.phoneNumber;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                user.gender = data.gender;
+
+
                 await user.save()
                 resolve({
                     errCode: 0,
@@ -193,25 +200,25 @@ module.exports.updateUserData = (data) => {
     })
 }
 
-module.exports.getAllCodeService = (typeInput) =>{
+module.exports.getAllCodeService = (typeInput) => {
     return new Promise(async (resolve, reject) => {
-        try{
-            if(!typeInput){
+        try {
+            if (!typeInput) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 })
-            }else{
+            } else {
                 let res = {};
                 let allcode = await db.Allcode.findAll({
-                    where : {type : typeInput}
+                    where: { type: typeInput }
                 });
                 res.errCode = 0;
                 res.data = allcode;
                 resolve(res);
             }
         }
-        catch(e){
+        catch (e) {
             reject(e);
         }
     })
