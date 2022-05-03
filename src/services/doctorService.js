@@ -1,4 +1,8 @@
 import db from "../models/index";
+require('dotenv').config();
+import _ from 'lodash';
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -57,20 +61,20 @@ let saveDetailInforDoctor = (inputData) => {
                     errMessage: 'Missing parameter'
                 })
             } else {
-                if(inputData.action === 'CREATE'){
+                if (inputData.action === 'CREATE') {
                     await db.Markdown.create({
                         contentHTML: inputData.contentHTML,
                         contentMarkdown: inputData.contentMarkdown,
                         description: inputData.description,
                         doctorId: inputData.doctorId,
-    
+
                     })
-                }else if(inputData.action === 'EDIT'){
+                } else if (inputData.action === 'EDIT') {
                     let doctorMarkdown = await db.Markdown.findOne({
-                        where: { doctorId: inputData.doctorId},
+                        where: { doctorId: inputData.doctorId },
                         raw: false
                     })
-                    if(doctorMarkdown){
+                    if (doctorMarkdown) {
                         doctorMarkdown.contentHTML = inputData.contentHTML;
                         doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
                         doctorMarkdown.description = inputData.description;
@@ -115,10 +119,10 @@ let getDetailDoctorById = (inputId) => {
                 })
 
                 if (data && data.image) {
-                   data.image = Buffer.from(data.image, 'base64').toString('binary');
+                    data.image = Buffer.from(data.image, 'base64').toString('binary');
 
                 }
-                if(!data) data = {};
+                if (!data) data = {};
                 resolve({
                     errCode: 0,
                     data: data
@@ -130,10 +134,61 @@ let getDetailDoctorById = (inputId) => {
     })
 }
 
+let bulkCreateSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.arrSchedule || !data.doctorId || !data.formatedDate) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing resolve parameter!'
+                })
+            } else {
+                let schedule = data.arrSchedule;
+                if (schedule && schedule.length > 0) {
+                    schedule = schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE;
+                        return item;
+                    })
+                }
+                //get all existing date
+                let existing = await db.Schedule.findAll({
+                    where: { doctorId: data.doctorId, date: data.formatedDate },
+                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
+                    raw: true
+                })
+                //convert data
+                if (existing && existing.length > 0) {
+                    existing = existing.map(item => {
+                        item.date = new Date(item.date).getTime();
+                        return item;
+                    })
+                }
+                //compare different
+                let toCreate = _.differenceWith(schedule, existing, (a,b) => {
+                    return a.timeType === b.timeType && a.date == b.date;
+                }); 
+                
+                //create data
+                if(toCreate && toCreate.length > 0){
+                    await db.Schedule.bulkCreate(toCreate);
+                }
+
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK'
+                });
+
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome,
     getAllDoctors,
     saveDetailInforDoctor,
-    getDetailDoctorById
+    getDetailDoctorById,
+    bulkCreateSchedule
 }
 
