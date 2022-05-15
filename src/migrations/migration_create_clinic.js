@@ -10,17 +10,20 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
            
-            nameClinic: {
+            name: {
                 type: Sequelize.STRING
             },
             address: {
                 type: Sequelize.STRING
             },
-            drescription: {
+            descriptionHTML: {
+                type: Sequelize.TEXT
+            },
+            descriptionMarkdown: {
                 type: Sequelize.TEXT
             },
             image: {
-                type: Sequelize.STRING
+                type: Sequelize.BLOB('long')
             },
 
             createdAt: {
