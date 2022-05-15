@@ -15,7 +15,7 @@ let createClinic = async (req, res) => {
 
 let getClinic = async (req, res) => {
     try {
-        let infor = await specialtyServices.getSpecialty();
+        let infor = await clinicServices.getClinic();
 
         return res.status(200).json(infor);
     } catch (e) {
@@ -28,7 +28,7 @@ let getClinic = async (req, res) => {
 
 let getDetailClinicById = async (req, res) => {
     try {
-        let infor = await specialtyServices.getDetailSpecialtybyId(req.query.id);
+        let infor = await clinicServices.getDetailClinicById(req.query.id);
         return res.status(200).json(infor);
     } catch (e) {
         return res.status(200).json({
