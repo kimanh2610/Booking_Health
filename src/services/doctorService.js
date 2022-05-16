@@ -389,11 +389,15 @@ let getListPaitentForDoctor = (doctorId, date) => {
                     include: [
                         {
                             model: db.User, as: 'patientData',
-                            attributes: ['email', 'fullName', 'gender'],
+                            attributes: ['email', 'fullName', 'gender', 'address'],
                             include: [
                                 { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
                             ]
                         },
+                        {
+                             model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi'],
+
+                        }
 
 
                     ],
